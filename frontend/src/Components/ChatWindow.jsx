@@ -1,15 +1,18 @@
 import "../Components/ChatWindow.css";
 import Chat from "../Components/Chat.jsx";
 import { MyContext } from "../Context/MyContext.jsx";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import { ScaleLoader } from "react-spinners";
 
 export default function ChatWindow() {
+  const [loading, setLoading] = useState(false);
   const { reply, setReply, prompt, setPrompt, currThreadId, setCurrThreadId } =
     useContext(MyContext);
 
   const getReply = async () => {
+    setLoading(true);
     const data = {
       message: prompt,
       threadId: currThreadId,
@@ -19,8 +22,9 @@ export default function ChatWindow() {
       setReply(response.data.reply);
       setPrompt("");
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
     }
+    setLoading(false);
   };
   return (
     <>
@@ -37,6 +41,7 @@ export default function ChatWindow() {
           </div>
         </div>
         <Chat></Chat>
+        <ScaleLoader color="#fff" loading={loading}></ScaleLoader>
         <div className="chatInput">
           <div className="inputBox">
             <input
