@@ -8,8 +8,16 @@ import { ScaleLoader } from "react-spinners";
 
 export default function ChatWindow() {
   const [loading, setLoading] = useState(false);
-  const { reply, setReply, prompt, setPrompt, currThreadId, setCurrThreadId } =
-    useContext(MyContext);
+  const {
+    reply,
+    setReply,
+    prompt,
+    setPrompt,
+    currThreadId,
+    setCurrThreadId,
+    prevChats,
+    setPrevChats,
+  } = useContext(MyContext);
 
   const getReply = async () => {
     setLoading(true);
@@ -19,13 +27,23 @@ export default function ChatWindow() {
     };
     try {
       const response = await axios.post("http://localhost:8080/api/chat", data);
+      console.log(response.data.reply);
       setReply(response.data.reply);
-      setPrompt("");
     } catch (error) {
       console.log(error);
     }
     setLoading(false);
   };
+  useEffect(() => {
+    if (prompt && reply) {
+      setPrevChats((prevChats) => [
+        ...prevChats,
+        { role: "user", content: prompt },
+        { role: "assistant", content: reply },
+      ]);
+    }
+    setPrompt("");
+  }, [reply]);
   return (
     <>
       <div className="chatWindow">
