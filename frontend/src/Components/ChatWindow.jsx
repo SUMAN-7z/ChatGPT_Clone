@@ -27,7 +27,6 @@ export default function ChatWindow() {
     };
     try {
       const response = await axios.post("http://localhost:8080/api/chat", data);
-      console.log(response.data.reply);
       setReply(response.data.reply);
     } catch (error) {
       console.log(error);

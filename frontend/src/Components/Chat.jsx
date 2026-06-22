@@ -1,6 +1,9 @@
 import { useContext, useEffect } from "react";
 import "../Components/Chat.css";
 import { MyContext } from "../Context/MyContext";
+import ReactMarkdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
 
 const Chat = () => {
   const { newChat, setNewChat, prevChats, setPrevChats } =
@@ -17,13 +20,13 @@ const Chat = () => {
             {chat.role === "user" ? (
               <p className="userMessage">{chat.content}</p>
             ) : (
-              <p className="gptMessage">{chat.content}</p>
+              <ReactMarkdown rehypePlugins={rehypeHighlight}>
+                {chat.content}
+              </ReactMarkdown>
             )}
           </div>
         ))}
       </div>
-
-      
     </>
   );
 };
