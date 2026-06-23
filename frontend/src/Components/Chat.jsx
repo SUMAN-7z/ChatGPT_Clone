@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../Components/Chat.css";
 import { MyContext } from "../Context/MyContext";
 import ReactMarkdown from "react-markdown";
@@ -6,13 +6,30 @@ import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 
 const Chat = () => {
-  const { newChat, setNewChat, prevChats, setPrevChats } =
-    useContext(MyContext);
+  const { newChat, prevChats, reply } = useContext(MyContext);
+  const [latestReply, setLatestReplay] = useState(null);
+  useEffect(() => {
+    // ?. avoids an error if prevChats is undefined; ! checks if length is 0 or undefined.
+    if (!prevChats?.length) return;
+    //const reply = "Hello how are you today";
+    // it convert it into array of words ["Hello", "how", "are", "you", "today"]
+    const content = reply.split(" ");
+    let currentWordIndex = 0;
+    const TYPING_SPEED = 40;
+
+    const interval = setInterval(() => {
+      setLatestReplay(content.slice(0, currentWordIndex + 1).join(" "));
+      currentWordIndex++;
+      //clearInterval() is used to stop an interval that was started with setInterval().
+      if (currentWordIndex >= content.length) clearInterval(interval);
+    }, TYPING_SPEED);
+  }, [prevChats, reply]);
+
   return (
     <>
       {newChat && <h1>Start a new Chat</h1>}
       <div className="chats">
-        {prevChats?.map((chat, idx) => (
+        {prevChats?.slice(0, -1).map((chat, idx) => (
           <div
             className={chat.role === "user" ? "userDiv" : "gptDiv"}
             key={idx}
@@ -26,6 +43,14 @@ const Chat = () => {
             )}
           </div>
         ))}
+
+        {prevChats.length > 0 && latestReply !== null && (
+          <div className="gptDiv" key={"typing"}>
+            <ReactMarkdown rehypePlugins={rehypeHighlight}>
+              {latestReply}
+            </ReactMarkdown>
+          </div>
+        )}
       </div>
     </>
   );

@@ -25,5 +25,6 @@
     max-width: 500px;
     width: fit-content;
 }
-.gptMessage {
+.hljs {
+    border-radius: 20px;
 }
