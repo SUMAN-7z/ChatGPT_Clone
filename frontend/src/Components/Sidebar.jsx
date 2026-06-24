@@ -1,5 +1,9 @@
 import "../Components/Sidebar.css";
+import { useContext } from "react";
+import MyContext from "../Context/MyContext";
+
 const Sidebar = () => {
+  const { allThreads, setAllThreads } = useContext(MyContext);
   return (
     <section className="sidebar">
       <button>
