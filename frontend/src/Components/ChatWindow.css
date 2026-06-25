@@ -85,3 +85,39 @@ input:focus {
   padding: 0.5rem;
   color: #b4b4b4;
 }
+
+/* dropDown css */
+.dropDown {
+  position: absolute;
+  top: 4rem;
+  right: 4rem;
+  width: 150px;
+  background-color: #323232;
+  padding: 0.3rem;
+  text-align: left;
+  border-radius: 6px;
+  z-index: 1000;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+.dropDownItem{
+  font-size: .8rem;
+  margin: .3rem 0;
+  padding: .5rem .2rem;
+  cursor: pointer;
+}
+
+.dropDownItem i{
+  font-size: .9rem;
+
+}
+.dropDownItem:hover{
+  background-color: rgba(180, 180, 180, 0.1);
+  border-radius: 6px;
+}
+
+.day{
+  background-color: #fff ;
+}
+.night{
+  background-color: #323232 ;
+}

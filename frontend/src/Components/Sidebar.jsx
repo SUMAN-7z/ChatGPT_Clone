@@ -53,6 +53,23 @@ const Sidebar = () => {
       console.log(error);
     }
   };
+
+  const DeleteThread = async (threadId) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8080/api/thread/${threadId}`,
+      );
+      setAllThreads((prev) =>
+        prev.filter((thread) => thread.threadId !== threadId),
+      );
+      if (threadId === currThreadId) {
+        createNewChat();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <section className="sidebar">
       <button onClick={createNewChat}>
@@ -63,8 +80,19 @@ const Sidebar = () => {
       </button>
       <ul className="history">
         {allThreads?.map((thread, idx) => (
-          <li key={idx} onClick={(e) => changeThread(thread.threadId)}>
-            {thread.title}{" "}
+          <li
+            key={idx}
+            onClick={(e) => changeThread(thread.threadId)}
+            className={thread.threadId === currThreadId ? "highlight" : " "}
+          >
+            {thread.title}
+            <i
+              className="fa-solid fa-trash-can"
+              onClick={(e) => {
+                e.stopPropagation();
+                DeleteThread(thread.threadId);
+              }}
+            ></i>
           </li>
         ))}
       </ul>

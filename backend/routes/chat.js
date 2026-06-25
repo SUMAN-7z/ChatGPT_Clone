@@ -3,31 +3,7 @@ import getGeminiResponse from "../utils/gemini.js";
 import Thread from "../models/Schema.js";
 const router = express.Router();
 
-// router.post("/chat", async (req, res) => {
-//   try {
-//     const { message } = req.body;
 
-//     if (!message) {
-//       return res.status(400).json({
-//         error: "Message is required",
-//       });
-//     }
-
-//     const response = await getGeminiResponse(message);
-
-//     return res.json({
-//       success: true,
-//       response,
-//     });
-//   } catch (error) {
-//     console.error(error);
-
-//     return res.status(500).json({
-//       success: false,
-//       error: error.message,
-//     });
-//   }
-// });
 
 router.get("/thread", async (req, res) => {
   try {

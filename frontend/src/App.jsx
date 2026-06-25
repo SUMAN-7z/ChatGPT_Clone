@@ -12,6 +12,7 @@ function App() {
   const [prevChats, setPrevChats] = useState([]);
   const [currThreadId, setCurrThreadId] = useState(uuidv1());
   const [allThreads, setAllThreads] = useState([]);
+  const [mode, setMode] = useState(false);
 
   const providerValues = {
     prompt,
@@ -26,10 +27,11 @@ function App() {
     setPrevChats,
     allThreads,
     setAllThreads,
+    mode,setMode
   };
 
   return (
-    <div className="app">
+    <div className="app" >
       <MyContext.Provider value={providerValues}>
         <Sidebar />
         <ChatWindow />

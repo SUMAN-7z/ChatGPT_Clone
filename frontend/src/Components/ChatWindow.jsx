@@ -17,12 +17,15 @@ export default function ChatWindow() {
     setCurrThreadId,
     prevChats,
     setPrevChats,
-    setNewChat
+    setNewChat,
+    mode,
+    setMode,
   } = useContext(MyContext);
 
+  const [isOpen, setIsOpen] = useState(false);
   const getReply = async () => {
     setLoading(true);
-    setNewChat(false)
+    setNewChat(false);
     const data = {
       message: prompt,
       threadId: currThreadId,
@@ -45,20 +48,51 @@ export default function ChatWindow() {
     }
     setPrompt("");
   }, [reply]);
+
+  const dropdownClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const Mode = () => {
+    setMode(!mode);
+  };
+  useEffect(() => {
+    console.log(mode);
+  }, [mode]);
   return (
     <>
-      <div className="chatWindow">
+      <div className={`chatWindow ${mode ? "day" : "night"}`}>
         <div className="navbar">
           <span>
             ChatGPT <i className="fa-solid fa-angle-down"></i>
           </span>
 
-          <div className="userIconDiv">
+          <div className="userIconDiv" onClick={dropdownClick}>
             <span className="userIcon">
               <i className="fa-solid fa-user"></i>
             </span>
           </div>
         </div>
+
+        {isOpen && (
+          <div className="dropDown">
+            <div className="dropDownItem">
+              <i class="fa-solid fa-gear"></i>Settings
+            </div>
+            <div className="dropDownItem">
+              {" "}
+              <i class="fa-solid fa-file-arrow-up"></i>Upgrade Plan
+            </div>
+            <div className="dropDownItem">
+              {" "}
+              <i class="fa-solid fa-right-from-bracket"></i>LogOut
+            </div>
+            <div onClick={Mode} className="dropDownItem">
+              <i className="fa-solid fa-sun"></i>Mode
+            </div>
+          </div>
+        )}
+
         <Chat></Chat>
         <ScaleLoader color="#fff" loading={loading}></ScaleLoader>
         <div className="chatInput">
