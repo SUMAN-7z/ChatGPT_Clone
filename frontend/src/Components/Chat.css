@@ -28,3 +28,9 @@
 .hljs {
     border-radius: 20px;
 }
+
+
+/* Width of scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}

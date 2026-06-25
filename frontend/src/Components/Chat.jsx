@@ -9,6 +9,10 @@ const Chat = () => {
   const { newChat, prevChats, reply } = useContext(MyContext);
   const [latestReply, setLatestReplay] = useState(null);
   useEffect(() => {
+    if (reply === null) {
+      setLatestReplay(null);
+      return;
+    }
     // ?. avoids an error if prevChats is undefined; ! checks if length is 0 or undefined.
     if (!prevChats?.length) return;
     //const reply = "Hello how are you today";
@@ -44,12 +48,22 @@ const Chat = () => {
           </div>
         ))}
 
-        {prevChats.length > 0 && latestReply !== null && (
-          <div className="gptDiv" key={"typing"}>
-            <ReactMarkdown rehypePlugins={rehypeHighlight}>
-              {latestReply}
-            </ReactMarkdown>
-          </div>
+        {prevChats.length > 0 && (
+          <>
+            {latestReply !== null ? (
+              <div className="gptDiv" key={"typing"}>
+                <ReactMarkdown rehypePlugins={rehypeHighlight}>
+                  {latestReply}
+                </ReactMarkdown>
+              </div>
+            ) : (
+              <div className="gptDiv" key={"non-typing"}>
+                <ReactMarkdown rehypePlugins={rehypeHighlight}>
+                  {prevChats[prevChats.length - 1].content}
+                </ReactMarkdown>
+              </div>
+            )}
+          </>
         )}
       </div>
     </>

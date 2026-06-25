@@ -17,10 +17,12 @@ export default function ChatWindow() {
     setCurrThreadId,
     prevChats,
     setPrevChats,
+    setNewChat
   } = useContext(MyContext);
 
   const getReply = async () => {
     setLoading(true);
+    setNewChat(false)
     const data = {
       message: prompt,
       threadId: currThreadId,
