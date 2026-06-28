@@ -3,13 +3,14 @@ import cors from "cors";
 import "dotenv/config";
 import mongoose from "mongoose";
 import chatRouter from "./routes/chat.js";
-
+import User from "./models/User.js";
+import bcrypt from "bcrypt";
 const app = express();
+
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api", chatRouter);
@@ -17,6 +18,8 @@ app.use("/api", chatRouter);
 app.get("/", (req, res) => {
   res.send("Server is running...");
 });
+
+
 
 // Database + Server Start
 const startServer = async () => {

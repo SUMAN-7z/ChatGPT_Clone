@@ -1,13 +1,94 @@
 import express from "express";
 import getGeminiResponse from "../utils/gemini.js";
 import Thread from "../models/Schema.js";
+import User from "../models/User.js";
+import bcrypt from "bcrypt";
+import { generateToken } from "../utils/generateToken.js";
+import { jwtAuthMiddleware } from "../utils/jwtAuthMiddleware.js";
+
 const router = express.Router();
 
-
-
-router.get("/thread", async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
-    const threads = await Thread.find({}).sort({ updatedAt: -1 });
+    const { name, address, email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: "Email already registered",
+      });
+    }
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      name,
+      address,
+      password: hashPassword,
+      email,
+    });
+
+    const savedUser = await user.save();
+
+    const payload = {
+      id: user._id,
+      email: user.email,
+    };
+
+    const token = generateToken(payload);
+    res.status(201).json({
+      message: "User created successfully",
+      token: token,
+      user: savedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+//Login routes
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    // Check if user exists
+    if (!user) {
+      return res.status(401).json({
+        error: "Invalid email or password",
+      });
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        error: "Invalid email or password",
+      });
+    }
+    const payload = {
+      id: user._id,
+      email: user.email,
+    };
+
+    const token = await generateToken(payload);
+
+    res.status(200).json({
+      message: "User logged in successfully",
+      token: token,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/thread", jwtAuthMiddleware, async (req, res) => {
+  try {
+    const threads = await Thread.find({ user: req.user.id }).sort({
+      updatedAt: -1,
+    });
     res.json(threads);
   } catch (error) {
     console.log(error);
@@ -17,10 +98,10 @@ router.get("/thread", async (req, res) => {
   }
 });
 
-router.get("/thread/:threadId", async (req, res) => {
+router.get("/thread/:threadId", jwtAuthMiddleware, async (req, res) => {
   const { threadId } = req.params;
   try {
-    const thread = await Thread.findOne({ threadId });
+    const thread = await Thread.findOne({ threadId, user: req.user.id });
     if (!thread) {
       return res.status(404).json({
         error: "Thread is not found",
@@ -34,10 +115,13 @@ router.get("/thread/:threadId", async (req, res) => {
   }
 });
 
-router.delete("/thread/:threadId", async (req, res) => {
+router.delete("/thread/:threadId", jwtAuthMiddleware, async (req, res) => {
   const { threadId } = req.params;
   try {
-    const deletedThread = await Thread.findOneAndDelete({ threadId });
+    const deletedThread = await Thread.findOneAndDelete({
+      threadId,
+      user: req.user.id,
+    });
     if (!deletedThread) {
       return res.status(404).json({ error: "Thread is not found" });
     }
@@ -51,7 +135,7 @@ router.delete("/thread/:threadId", async (req, res) => {
   }
 });
 
-router.post("/chat", async (req, res) => {
+router.post("/chat", jwtAuthMiddleware, async (req, res) => {
   const { threadId, message } = req.body;
 
   if (!threadId || !message) {
@@ -65,6 +149,7 @@ router.post("/chat", async (req, res) => {
 
     if (!thread) {
       thread = new Thread({
+        user: req.user.id,
         threadId,
         title: message,
         messages: [
