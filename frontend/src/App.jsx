@@ -4,7 +4,8 @@ import ChatWindow from "./Components/ChatWindow.jsx";
 import { MyContext } from "./Context/MyContext.jsx";
 import { useState } from "react";
 import { v1 as uuidv1 } from "uuid";
-
+import Signup from "./Components/Signup.jsx";
+import {Route,Routes} from "react-router-dom"
 function App() {
   const [prompt, setPrompt] = useState("");
   const [reply, setReply] = useState(null);
@@ -31,12 +32,21 @@ function App() {
   };
 
   return (
-    <div className="app" >
-      <MyContext.Provider value={providerValues}>
-        <Sidebar />
-        <ChatWindow />
-      </MyContext.Provider>
-    </div>
+    <MyContext.Provider value={providerValues}>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+
+        <Route
+          path="/"
+          element={
+            <div className="app">
+              <Sidebar />
+              <ChatWindow />
+            </div>
+          }
+        />
+      </Routes>
+    </MyContext.Provider>
   );
 }
 

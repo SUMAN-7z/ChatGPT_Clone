@@ -5,6 +5,7 @@ import { useContext, useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { ScaleLoader } from "react-spinners";
+import Signup from "./Signup.jsx";
 
 export default function ChatWindow() {
   const [loading, setLoading] = useState(false);
@@ -94,6 +95,7 @@ export default function ChatWindow() {
         )}
 
         <Chat></Chat>
+        <Signup />
         <ScaleLoader color="#fff" loading={loading}></ScaleLoader>
         <div className="chatInput">
           <div className="inputBox">

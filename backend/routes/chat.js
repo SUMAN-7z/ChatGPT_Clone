@@ -5,16 +5,27 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/generateToken.js";
 import { jwtAuthMiddleware } from "../utils/jwtAuthMiddleware.js";
+import {
+  signupValidation,
+  loginValidation,
+} from "../middleware/joivalidation.js";
 
 const router = express.Router();
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", signupValidation, async (req, res) => {
   try {
     const { name, address, email, password } = req.body;
+    if (!name || !address || !email || !password) {
+      return res.status(500).json({
+        success: false,
+        message: "All fields are required!",
+      });
+    }
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(409).json({
+        success:false,
         message: "Email already registered",
       });
     }
@@ -29,15 +40,9 @@ router.post("/signup", async (req, res) => {
 
     const savedUser = await user.save();
 
-    const payload = {
-      id: user._id,
-      email: user.email,
-    };
-
-    const token = generateToken(payload);
     res.status(201).json({
+      success:true,
       message: "User created successfully",
-      token: token,
       user: savedUser,
     });
   } catch (error) {
@@ -48,7 +53,7 @@ router.post("/signup", async (req, res) => {
 });
 
 //Login routes
-router.post("/login", async (req, res) => {
+router.post("/login", loginValidation, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -78,6 +83,7 @@ router.post("/login", async (req, res) => {
     res.status(200).json({
       message: "User logged in successfully",
       token: token,
+      username: user.name,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
