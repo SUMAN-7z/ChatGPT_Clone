@@ -25,7 +25,7 @@ router.post("/signup", signupValidation, async (req, res) => {
 
     if (existingUser) {
       return res.status(409).json({
-        success:false,
+        success: false,
         message: "Email already registered",
       });
     }
@@ -41,7 +41,7 @@ router.post("/signup", signupValidation, async (req, res) => {
     const savedUser = await user.save();
 
     res.status(201).json({
-      success:true,
+      success: true,
       message: "User created successfully",
       user: savedUser,
     });
@@ -57,11 +57,18 @@ router.post("/login", loginValidation, async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
     const user = await User.findOne({ email });
     // Check if user exists
     if (!user) {
       return res.status(401).json({
-        error: "Invalid email or password",
+        message: "Invalid email or password",
+        success: false,
       });
     }
 
@@ -70,7 +77,8 @@ router.post("/login", loginValidation, async (req, res) => {
 
     if (!isMatch) {
       return res.status(401).json({
-        error: "Invalid email or password",
+        message: "Invalid email or password",
+        success: false,
       });
     }
     const payload = {
@@ -84,6 +92,7 @@ router.post("/login", loginValidation, async (req, res) => {
       message: "User logged in successfully",
       token: token,
       username: user.name,
+      success: true,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -132,7 +141,8 @@ router.delete("/thread/:threadId", jwtAuthMiddleware, async (req, res) => {
       return res.status(404).json({ error: "Thread is not found" });
     }
     return res.status(200).json({
-      success: "Thread deleted successfully",
+      success: true,
+      message: "Thread deleted successfully",
     });
   } catch (error) {
     res.status(500).json({

@@ -3,7 +3,8 @@ import { useContext, useEffect } from "react";
 import { MyContext } from "../Context/MyContext";
 import axios from "axios";
 import { v1 as uuidv1 } from "uuid";
-
+import { successHandler } from "../Error_Success/Es";
+import { ToastContainer } from "react-toastify";
 const Sidebar = () => {
   const {
     allThreads,
@@ -17,7 +18,12 @@ const Sidebar = () => {
   } = useContext(MyContext);
   const getAllThreads = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/thread");
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:8080/api/thread", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const filteredData = res.data.map((thread) => ({
         threadId: thread.threadId,
         title: thread.title,
@@ -42,8 +48,15 @@ const Sidebar = () => {
   const changeThread = async (newThreadId) => {
     setCurrThreadId(newThreadId);
     try {
+      const token = localStorage.getItem("token");
+
       const result = await axios.get(
         `http://localhost:8080/api/thread/${newThreadId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       const response = result.data.messages;
       setPrevChats(response);
@@ -56,9 +69,16 @@ const Sidebar = () => {
 
   const DeleteThread = async (threadId) => {
     try {
+      const token = localStorage.getItem("token");
       const res = await axios.delete(
         `http://localhost:8080/api/thread/${threadId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
+      successHandler(res.data.message);
       setAllThreads((prev) =>
         prev.filter((thread) => thread.threadId !== threadId),
       );
@@ -99,6 +119,7 @@ const Sidebar = () => {
       <div className="sign">
         <p>By Suman &hearts;</p>
       </div>
+      <ToastContainer />
     </section>
   );
 };

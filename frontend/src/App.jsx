@@ -5,7 +5,8 @@ import { MyContext } from "./Context/MyContext.jsx";
 import { useState } from "react";
 import { v1 as uuidv1 } from "uuid";
 import Signup from "./Components/Signup.jsx";
-import {Route,Routes} from "react-router-dom"
+import { Route, Routes } from "react-router-dom";
+import Login from "./Components/Login.jsx";
 function App() {
   const [prompt, setPrompt] = useState("");
   const [reply, setReply] = useState(null);
@@ -28,14 +29,15 @@ function App() {
     setPrevChats,
     allThreads,
     setAllThreads,
-    mode,setMode
+    mode,
+    setMode,
   };
 
   return (
     <MyContext.Provider value={providerValues}>
       <Routes>
         <Route path="/signup" element={<Signup />} />
-
+        <Route path="/login" element={<Login />} />
         <Route
           path="/"
           element={

@@ -28,10 +28,10 @@ const Chat = () => {
       if (currentWordIndex >= content.length) clearInterval(interval);
     }, TYPING_SPEED);
   }, [prevChats, reply]);
-
+  const username = localStorage.getItem("username");
   return (
     <>
-      {newChat && <h1>Start a new Chat</h1>}
+      {newChat && <h1>Hello, {username}! What can I help you with today?</h1>}
       <div className="chats">
         {prevChats?.slice(0, -1).map((chat, idx) => (
           <div
