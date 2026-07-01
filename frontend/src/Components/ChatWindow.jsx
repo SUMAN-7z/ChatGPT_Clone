@@ -23,6 +23,7 @@ export default function ChatWindow() {
     setNewChat,
     mode,
     setMode,
+    setIsLoggedIn
   } = useContext(MyContext);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -77,6 +78,7 @@ export default function ChatWindow() {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     successHandler("Loggedout Successfully");
+    setIsLoggedIn(false);
     setTimeout(() => {
       Navigate("/login");
     }, 1000);
@@ -112,7 +114,6 @@ export default function ChatWindow() {
             </div>
           </div>
         )}
-
         <Chat></Chat>
         <ScaleLoader color="#fff" loading={loading}></ScaleLoader>
         <div className="chatInput">
